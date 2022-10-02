@@ -1,0 +1,71 @@
+1) Explain what the simple List component does.
+Ans- List Component is used to display List with some texts as List items. The wrappedListComponent returns a memoized components list. 
+It takes an array (items) of strings(text) as props. For each items in the array, it maps through all and displays their content on the 
+screen with a background color. If one items is selected, then it displays it with a different background color (Green). The user can 
+click on an item and it will get selected and will get a background color of Green.
+
+Q2.What problems / warnings are there with code?
+
+A2) The warnings or problems in this code are as mentioned below:
+P1) When we use sueState its take two perimeters. first is variable and second is a function. So we need to change this :
+const [setSelectedIndex, selectedIndex] = useState();
+It should be like this,
+
+const [selectedIndex, setSelectedIndex] = useState();
+P2) The calling functionality is wrong in the
+WrappedListComponent.propTypes = {
+  items: PropTypes.array(PropTypes.shapeOf({
+    text: PropTypes.string.isRequired,
+  })),
+};
+
+
+It should be like this,
+
+WrappedListComponent.propTypes = {
+  items: PropTypes.arrayOf(
+    PropTypes.shape({
+      text: PropTypes.string.isRequired,
+    })
+  ),
+};
+P3) We can not map null, if we face this issues we can handle it manually, if data null or something then the page error :
+WrappedListComponent.defaultProps = {
+  items: null,
+};
+It should be like this,
+
+WrappedListComponent.defaultProps = {
+  items: [
+    { index: 1, Text: "jhone" },
+    { index: 2, Text: "smith" },
+  ],
+};
+
+P4) Missing dynamic key for mapping, isSelected given a Boolean error handling for null or undefined data, it gives us better error handle and gives better user experience :
+{
+  items.map((item, index) => (
+    <SingleListItem
+      onClickHandler={() => handleClick(index)}
+      text={item.text}
+      index={index}
+      isSelected={selectedIndex}
+    />
+  ));
+}
+It should be like this,
+
+{
+  Array.isArray(items)
+    ? items?.map((items, index) => (
+        <SingleListItem
+          key={index}
+          onClickHandler={() => handleClick(index)}
+          text={item.text}
+          index={index}
+          isSelected={Boolean(selectedIndex)}
+        />
+      ))
+    : null;
+}
+
